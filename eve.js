@@ -5,7 +5,6 @@ var http = require('http');
 var acceptor = http.createServer().listen(8888);
 
 acceptor.on('request', function(request, response) {
-	console.log('request' + request.url);
 	request.pause();
 	var options = url.parse(request.url);
 	options.headers = request.headers;
@@ -17,7 +16,16 @@ acceptor.on('request', function(request, response) {
 		response.writeHeader(serverResponse.statusCode, serverResponse.headers);
 		serverResponse.pipe(response);
 		serverResponse.resume();
+		console.log(request.method + ' ' + request.url);
+		console.log('Request:');
+		inspect(request.headers);
+		console.log('Response:');
+		inspect(serverResponse.headers);
 	});
 	request.pipe(connector);
 	request.resume();
 });
+
+function inspect(thing) {
+	console.log(JSON.stringify(thing, null, 2));
+}
