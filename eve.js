@@ -3,8 +3,10 @@
 var url = require('url');
 var http = require('http');
 var colors = require('colors');
+var _ = require('underscore');
 
 var acceptor = http.createServer().listen(8888);
+var width = 0;
 
 acceptor.on('request', function(request, response) {
 	request.pause();
@@ -29,10 +31,10 @@ function log(options, request, response) {
 	console.log('');
 	console.log(method + ' ' + options.path);
 	console.log('');
-	console.log('Request headers:'.grey);
+	console.log('Request headers'.cyan);
 	logHeaders(request.headers);
 	console.log('');
-	console.log('Response headers:'.grey);
+	console.log('Response headers'.cyan);
 	logHeaders(response.headers);
 }
 
@@ -50,7 +52,18 @@ function colorMethod(method) {
 }
 
 function logHeaders(headers) {
-	for(var name in headers) {
-		console.log(name + ': ' + headers[name]);
+	width = Math.max(width, _.reduce(headers, function(memo, value, name) {
+		return Math.max(memo, name.length);
+	}, 0));
+	_.each(headers, function(value, name) {
+		console.log(pad(name, width) + ' ' + value.grey);
+	});
+}
+
+function pad(s, length) {
+	var result = s;
+	for(var i = s.length; i < length; i++) {
+		result = result + ' ';
 	}
+	return result;
 }
