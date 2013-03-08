@@ -27,10 +27,10 @@ optimist
 var argv = optimist.argv;
 
 if(!argv['proxy-mode']) {
-	optimist.demand('target-host').argv;
+	argv = optimist.demand('target-host').argv;
 }
 
-var acceptor = http.createServer().listen(8888);
+var acceptor = http.createServer().listen(argv.port);
 var width = 0;
 
 acceptor.on('request', function(request, response) {
