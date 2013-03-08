@@ -20,20 +20,30 @@ acceptor.on('request', function(request, response) {
 		serverResponse.resume();
 		log(options, request, serverResponse);
 	});
+
+	connector.on('error', function(e) {
+		logMethod(request, options);
+		logHeaders('Request headers', request);
+		console.log('Problem with request:'.red + e.message.red);
+		console.log(e);
+		response.end();
+		connector.end();
+	});
+
 	request.pipe(connector);
 	request.resume();
 });
 
 function log(options, request, response) {
+	logMethod(request, options);
+	logHeaders('Request headers', request);
+	logHeaders('Response headers', response);
+}
+
+function logMethod(request, options) {
 	var method = colorMethod(request.method);
 	console.log('');
 	console.log(method + ' ' + options.path);
-	console.log('');
-	console.log('Request headers'.cyan);
-	logHeaders(request.headers);
-	console.log('');
-	console.log('Response headers'.cyan);
-	logHeaders(response.headers);
 }
 
 function colorMethod(method) {
@@ -49,11 +59,13 @@ function colorMethod(method) {
 	}
 }
 
-function logHeaders(headers) {
-	width = Math.max(width, _.reduce(headers, function(memo, value, name) {
+function logHeaders(title, requestOrResponse) {
+	console.log('');
+	console.log(title.cyan);
+	width = Math.max(width, _.reduce(requestOrResponse.headers, function(memo, value, name) {
 		return Math.max(memo, name.length);
 	}, 0));
-	_.each(headers, function(value, name) {
+	_.each(requestOrResponse.headers, function(value, name) {
 		console.log(pad(name, width) + ' ' + value.grey);
 	});
 }
