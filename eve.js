@@ -5,7 +5,7 @@ var _ = require('underscore');
 
 var optimist = require('optimist');
 
-optimist
+optimist = optimist
   .usage('Supply either --proxy-mode or --target-host')
 
   .boolean('proxy-mode')
