@@ -3,21 +3,24 @@ var _ = require('underscore');
 
 var width = 0;
 
-function log(options, request, response) {
+exports.onSuccess = function(options, request, response) {
   logMethod(request, options);
   logHeaders('Request headers', request);
   logHeaders('Response headers', response);
 }
 
-exports.log = log;
+exports.onFailure = function(options, request, e) {
+  logMethod(request, options);
+  logHeaders('Request headers', request);
+  console.log('Problem with request:'.red + e.message.red);
+  console.log(e);
+}
 
 function logMethod(request, options) {
   var method = colorMethod(request.method);
   console.log('');
   console.log(method + ' ' + options.path);
 }
-
-exports.logMethod = logMethod;
 
 function colorMethod(method) {
   switch(method) {
@@ -42,8 +45,6 @@ function logHeaders(title, requestOrResponse) {
     console.log(pad(name, width) + ' ' + (value ? value.grey : ''));
   });
 }
-
-exports.logHeaders = logHeaders;
 
 function pad(s, length) {
   var result = s;

@@ -53,16 +53,13 @@ acceptor.on('request', function(request, response) {
     response.writeHeader(serverResponse.statusCode, serverResponse.headers);
     serverResponse.pipe(response);
     serverResponse.resume();
-    cli.log(options, request, serverResponse);
+    cli.onSuccess(options, request, serverResponse);
   });
 
   connector.on('error', function(e) {
-    cli.logMethod(request, options);
-    cli.logHeaders('Request headers', request);
-    console.log('Problem with request:'.red + e.message.red);
-    console.log(e);
     response.end();
     connector.end();
+    cli.onFailure(options, request, e);
   });
 
   request.pipe(connector);
