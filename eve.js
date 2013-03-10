@@ -101,7 +101,7 @@ function logHeaders(title, requestOrResponse) {
 		return Math.max(memo, name.length);
 	}, 0));
 	_.each(requestOrResponse.headers, function(value, name) {
-		console.log(pad(name, width) + ' ' + value.grey);
+		console.log(pad(name, width) + ' ' + (value ? value.grey : ''));
 	});
 }
 
