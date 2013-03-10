@@ -6,4 +6,4 @@ var argv = cli.argv();
 
 events.addListener(cli);
 
-var server = new proxy.Server(argv.port, argv['proxy-mode'], argv['target-host']);
+var server = new proxy.Server(argv.host, argv.port, argv['proxy-mode'], argv['target-host']);

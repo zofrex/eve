@@ -3,8 +3,8 @@ var url = require('url');
 
 var events = require('./events');
 
-exports.Server = function Server(port, proxy_mode, target_host) {
-  this.acceptor = http.createServer().listen(port);
+exports.Server = function Server(host, port, proxy_mode, target_host) {
+  this.acceptor = http.createServer().listen(port, host);
 
   this.acceptor.on('request', function(request, response) {
     request.pause();
