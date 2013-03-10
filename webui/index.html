@@ -13,9 +13,30 @@
         });
       }
     </script>
+      <script src="/js/angular.min.js"></script>
+      <script src="/js/controllers.js"></script>
   </head>
   <body onload="startup()">
     <h1>It works!</h1>
     <ul id="requests"></ul>
+
+    <div id="app" ng-app ng-controller="RequestListCtrl">
+      <ul>
+        <li ng-repeat="request in requests" ng-click="open(request)">
+          {{request.url}}
+        </li>
+      </ul>
+      <ng-switch on="anyItemOpen()">
+        <div ng-switch-when="true" ng-controller="RequestListCtrl">
+          Detail view:
+          <table>
+            <tr ng-repeat="(key,value) in opened.requestHeaders">
+              <td>{{key}}</td>
+              <td>{{value}}</td>
+            </tr>
+          </table>
+        </div>
+      </ng-switch>
+    </div>
   </body>
 </html>
