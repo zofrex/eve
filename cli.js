@@ -1,7 +1,37 @@
 var colors = require('colors');
 var _ = require('underscore');
+var optimist = require('optimist');
 
 var width = 0;
+
+exports.argv = function() {
+  var _optimist = optimist
+    .usage('Supply either --proxy-mode or --target-host')
+
+    .boolean('proxy-mode')
+    .describe('proxy-mode', 'Operate as an HTTP proxy')
+
+    .default('port', 8888)
+    .describe('port', 'Port to listen on')
+    .alias('p', 'port')
+
+    .default('host', '0.0.0.0')
+    .describe('host', 'Address to listen on (0.0.0.0 if ommitted)')
+    .alias('h', 'host')
+
+    .string('target-host')
+    .describe('target-host', 'Host to forward requests to')
+    .alias('t', 'target-host')
+  ;
+
+  var argv = _optimist.argv;
+
+  if(!argv['proxy-mode']) {
+    argv = _optimist.demand('target-host').argv;
+  }
+
+  return argv;
+}
 
 exports.onSuccess = function(options, request, response) {
   logMethod(request, options);
