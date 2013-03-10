@@ -3,6 +3,7 @@ var http = require('http');
 var _ = require('underscore');
 
 var cli = require('./cli');
+var events = require('./events');
 
 var optimist = require('optimist');
 
@@ -31,6 +32,8 @@ if(!argv['proxy-mode']) {
   argv = optimist.demand('target-host').argv;
 }
 
+events.addListener(cli);
+
 var acceptor = http.createServer().listen(argv.port);
 
 acceptor.on('request', function(request, response) {
@@ -53,13 +56,13 @@ acceptor.on('request', function(request, response) {
     response.writeHeader(serverResponse.statusCode, serverResponse.headers);
     serverResponse.pipe(response);
     serverResponse.resume();
-    cli.onSuccess(options, request, serverResponse);
+    events.success(options, request, serverResponse);
   });
 
   connector.on('error', function(e) {
     response.end();
     connector.end();
-    cli.onFailure(options, request, e);
+    events.failure(options, request, e);
   });
 
   request.pipe(connector);
