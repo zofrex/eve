@@ -9,3 +9,4 @@ events.addListener(cli);
 
 var server = new proxy.Server(argv.host, argv.port, argv['proxy-mode'], argv['target-host']);
 webui.listen(argv.host, '3734');
+events.addListener(webui);
