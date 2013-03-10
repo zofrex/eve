@@ -1,9 +1,6 @@
-var url = require('url');
-var http = require('http');
-var _ = require('underscore');
-
 var cli = require('./cli');
 var events = require('./events');
+var proxy = require('./proxy');
 
 var optimist = require('optimist');
 
@@ -34,37 +31,4 @@ if(!argv['proxy-mode']) {
 
 events.addListener(cli);
 
-var acceptor = http.createServer().listen(argv.port);
-
-acceptor.on('request', function(request, response) {
-  request.pause();
-  var options;
-  if(!argv['proxy-mode']) {
-    var path = url.parse(request.url).path;
-    options = url.parse(argv['target-host'] + path);
-  }
-  else {
-    options = url.parse(request.url);
-  }
-  options.headers = request.headers;
-  options.headers.host = options.hostname;
-  options.method = request.method;
-  options.agent = false;
-
-  var connector = http.request(options, function(serverResponse) {
-    serverResponse.pause();
-    response.writeHeader(serverResponse.statusCode, serverResponse.headers);
-    serverResponse.pipe(response);
-    serverResponse.resume();
-    events.success(options, request, serverResponse);
-  });
-
-  connector.on('error', function(e) {
-    response.end();
-    connector.end();
-    events.failure(options, request, e);
-  });
-
-  request.pipe(connector);
-  request.resume();
-});
+var server = new proxy.Server(argv.port, argv['proxy-mode'], argv['target-host']);
