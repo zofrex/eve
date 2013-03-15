@@ -7,36 +7,60 @@
         var requests = document.getElementById("requests");
         var source = new EventSource('/requests');
         source.addEventListener('success', function(e) {
-          var newElement = document.createElement('li');
+          var newElement = document.createElement('tr');
           newElement.innerHTML = 'message: ' + e.data;
           requests.appendChild(newElement);
         });
       }
     </script>
+      <link href="../css/bootstrap.css" rel="stylesheet">
       <script src="/js/angular.min.js"></script>
       <script src="/js/controllers.js"></script>
   </head>
   <body onload="startup()">
-    <h1>It works!</h1>
-    <ul id="requests"></ul>
 
-    <div id="app" ng-app ng-controller="RequestListCtrl">
-      <ul>
-        <li ng-repeat="request in requests" ng-click="open(request)">
-          {{request.url}}
-        </li>
-      </ul>
-      <ng-switch on="anyItemOpen()">
-        <div ng-switch-when="true" ng-controller="RequestListCtrl">
-          Detail view:
-          <table>
-            <tr ng-repeat="(key,value) in opened.requestHeaders">
-              <td>{{key}}</td>
-              <td>{{value}}</td>
+    <!--HEADER-->
+
+    <div class="page-header">
+      <h1>Eve <small>Some bullshit about Walle</small></h1>
+    </div>
+
+    <!--CONTENT-->
+
+    <div class="container">
+
+      <h1>It works!</h1>
+        <ul id="requests"></ul>
+
+      <div id="app" ng-app ng-controller="RequestListCtrl">
+
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>URL</th>
             </tr>
-          </table>
-        </div>
-      </ng-switch>
+          </thead>
+
+          <tbody>
+            <tr ng-repeat="request in requests" ng-click="open(request)">
+               <td>{{request.url}}</td>
+          </tr>
+              </tbody>
+            </table>
+
+
+
+        <ng-switch on="anyItemOpen()">
+          <div  class="well" ng-switch-when="true" ng-controller="RequestListCtrl">
+            Detail view:
+
+              <dl class="dl-horizontal" ng-repeat="(key,value) in opened.requestHeaders">
+                <dt>{{key}}</td>
+                <dd>{{value}}</td>
+            </dl>
+          </div>
+        </ng-switch>
+      </div>
     </div>
   </body>
 </html>
